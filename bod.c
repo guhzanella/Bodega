@@ -27,6 +27,7 @@ typedef struct lista{
 
 TpNodo *inserir(TpNodo *k, TpLista *sentinela){
     TpNodo *u = (TpNodo*)malloc(sizeof(TpNodo));
+    system("clear || cls");
 
     printf("Codigo: ");
     scanf("%s", (u->bebida).code);
@@ -61,22 +62,24 @@ TpNodo *inserir(TpNodo *k, TpLista *sentinela){
 }
 
 TpNodo *excluir(TpNodo *k, TpLista *sentinela){
-    char matricula;
+    char codigo[TAM_CODE];
+    TpNodo *aux;
+    system("clear || cls");
 
     if(sentinela->nItens != 0){
         printf("Informe o codigo da Bebida que sera removida: ");
-        scanf("%s", matricula);
+        scanf("%s", codigo);
 
-        if(sentinela->nItens == 1){ //Caso existe apenas um elemento na lista
-            if(strcmp(matricula, ((sentinela->first)->bebida).code) == ((sentinela->first)->bebida).code){
-                TpNodo *aux = sentinela->first;
+        if(sentinela->nItens == 1){ //Caso existe apenas uma bebida na lista
+            if(strcmp(codigo, (aux->bebida).code) == ((sentinela->first)->bebida).code){
+                TpNodo *aux = (sentinela->first);
 
                 sentinela->first = NULL;
                 sentinela->last = NULL;
                 sentinela->nItens--;
             }
         }
-        else if(strcmp(matricula, ((sentinela->first)->bebida).code) == ((sentinela->first)->info).matricula){ //Caso o elemento a ser removido seja o primeiro
+        else if(strcmp(codigo, (aux->bebida).code) == ((sentinela->first)->bebida).code){ //Caso a bebida a ser removido seja o primeiro
             TpNodo* aux = (sentinela->first);
 
             sentinela->first = aux->prev;
@@ -84,7 +87,7 @@ TpNodo *excluir(TpNodo *k, TpLista *sentinela){
             sentinela->nItens--;
             free(aux);
         }
-        else if (strcmp(matricula, ((sentinela->first)->bebida).code) == ((sentinela->last)->info).matricula){ //Caso o aluno a ser removido seja o ultimo
+        else if (strcmp(codigo, (aux->bebida).code) == ((sentinela->last)->bebida).code){ //Caso a bebida a ser removido seja o ultimo
             TpNodo* aux = (sentinela->last);
 
             sentinela->last = aux->next;
@@ -92,11 +95,11 @@ TpNodo *excluir(TpNodo *k, TpLista *sentinela){
             sentinela->nItens--;
             free(aux);
         }
-        else{ //Caso o aluno a ser removido esteja no meio da lista
+        else{ //Caso a bebida a ser removida esteja no meio da lista
             TpNodo* aux = (sentinela->last);
 
             while(aux != NULL){
-                if((aux->info).matricula == matricula){
+                if((aux->bebida).code == strcmp(codigo, (aux->bebida).code)){
                     (aux->prev)->next = aux->next;
                     (aux->next)->prev = aux->prev;
                     sentinela->nItens--;
@@ -111,54 +114,125 @@ TpNodo *excluir(TpNodo *k, TpLista *sentinela){
     return k;
 }
 
-void exibir(TpLista *sentinela){
+void listar(TpLista *sentinela){
     TpNodo *aux = sentinela->last;
+    system("clear || cls");
 
     if(aux == NULL)
-        printf("Lista Vazia!\n");
+        printf("Nao ha Bebidas!\n");
     else{
         while(aux != NULL){
-            printf("%d, ", (aux->info).matricula);
-            printf("%s, ", (aux->info).nome);
-            printf("%02d/%02d/%04d, ", aux->info.nascimento.dia, (aux->info).nascimento.mes, (aux->info).nascimento.ano);
-            printf("%.2f\n", (aux->info).media);
+            printf("%s, %s, %d, %.2f, %d, %d \n", (aux->bebida).code, (aux->bebida).name, (aux->bebida).volume, (aux->bebida).price, (aux->bebida).qt_stock, (aux->bebida).isAlcoholic);
             aux = aux->next;
         }
     }
 }
 
+TpNodo *buscar(TpLista *sentinela){
+    TpNodo *aux = sentinela->last;
+    char codigo[TAM_CODE];
+    system("clear || cls");
+
+    if(aux == NULL)
+        printf("Nao ha Bebidas!\n");
+    else{
+        printf("Informe o codigo da Bebida: ");
+        scanf("%s", codigo);
+
+        for(aux=sentinela->first; aux!=NULL; aux=aux->next) {
+            if(strcmp(codigo, (aux->bebida).code) == (aux->bebida).code)
+                printf("%s, %s, %d, %.2f, %d, %d \n", (aux->bebida).code, (aux->bebida).name, (aux->bebida).volume, (aux->bebida).price, (aux->bebida).qt_stock, (aux->bebida).isAlcoholic);
+            else
+                printf("Bebida nao cadastrada!\n");
+        }
+    }
+    return;
+}
+
+TpNodo *comprar(TpLista *sentinela){
+    TpNodo *aux = sentinela->last;
+    char codigo[TAM_CODE];
+    system("clear || cls");
+
+    printf("Informe o codigo da Bebida que deseja comprar: ");
+    scanf("%s", codigo);
+
+    for(aux=sentinela->first; aux!=NULL; aux=aux->next) {
+        if(strcmp(codigo, (aux->bebida).code) == (aux->bebida).code)
+            (aux->bebida).qt_stock++;
+    }
+}
+
+TpNodo *vender(TpLista *sentinela){
+    TpNodo *aux = sentinela->last;
+    char codigo, sexo;
+    system("clear || cls");
+
+    printf("Informe o codigo da Bebida que deseja vender: ");
+    scanf("%s", codigo);
+
+    for(aux=sentinela->first; aux!=NULL; aux=aux->next){
+        if(strcmp(codigo, (aux->bebida).code) == (aux->bebida).code){
+            if((aux->bebida).qt_stock > 0){
+                printf("Voce tem mais que 18 anos? (S ou N)\n");
+                scanf("%c", sexo);
+                if((sexo == "S") || (sexo == "s"))
+                    (aux->bebida).qt_stock--;
+                else
+                    printf("[ERRO]: Menor de 18 anos!\n");
+            }
+            else
+                printf("Nao ha Bebidas!\n");
+        }
+    }
+    return;
+}
+
 int main(){
     TpNodo *k = NULL;
     TpLista *sentinela = (TpLista*)malloc(sizeof(TpLista));
+    int opcao;
     
     sentinela->nItens = 0;
     sentinela->first = NULL;
     sentinela->last = NULL;
-    
-    int opcao;
 
-    do
-    {
+    do{
+        printf("\n\t1 - Adicionar Bebidas\n");
+        printf("\t2 - Listar Bebidas\n");
+        printf("\t3 - Buscar Bebidas\n");
+        printf("\t4 - Excluir Bebidas\n");
+        printf("\t5 - Comprar Bebidas\n");
+        printf("\t6 - Vender Bebidas\n");
+        printf("\t0 - Sair do Programa\n");
+
+        printf("\tInsira a opcao que deseja: ");
         scanf("%d", &opcao);
+
         switch(opcao)
         {
         case 1:
             k = inserir(k, sentinela);
             break;
         case 2:
-            k = excluir(k, sentinela);
+            listar(sentinela);
             break;
         case 3:
-            exibir(sentinela);
+            k = buscar(sentinela);
             break;
         case 4:
-            exibir_ordem_inv(sentinela);
+            k = excluir(k, sentinela);
+            break;
+        case 5:
+            k = comprar(sentinela);
+            break;
+        case 6:
+            k = vender(sentinela);
             break;
         case 0:
             break;
         }
-    }
-    while(opcao != 0);
+    }while(opcao != 0);
 
     return 0;
 }
